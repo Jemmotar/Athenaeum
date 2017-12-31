@@ -28,12 +28,13 @@ function Create()
   local pointer = 0;
 
   UIMorph = CreateFrame("Frame", "atUIMorph")
-  UIMorph:SetPoint("RIGHT", UIParent, "RIGHT", -16, 0)
+  UIMorph:SetPoint("LEFT", UIParent, "LEFT", 10, 250)
   UIMorph:SetSize(48, 128)
 
   local InputPointer = CreateFrame("EditBox", "atInputPointer", UIMorph, "InputBoxTemplate")
   InputPointer:SetPoint("CENTER", UIMorph, "CENTER")
   InputPointer:SetWidth(42)
+  InputPointer:SetWidth(48)
   InputPointer:SetHeight(24)
   InputPointer:SetNumeric(true)
   InputPointer:SetNumber(pointer)
