@@ -33,7 +33,6 @@ function Create()
 
   local InputPointer = CreateFrame("EditBox", "atInputPointer", UIMorph, "InputBoxTemplate")
   InputPointer:SetPoint("CENTER", UIMorph, "CENTER")
-  InputPointer:SetWidth(42)
   InputPointer:SetWidth(48)
   InputPointer:SetHeight(24)
   InputPointer:SetNumeric(true)
