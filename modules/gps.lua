@@ -9,10 +9,10 @@ local Module = core.Config.modules.gps;
 local OriginalChatHandler;
 local UIFrame;
 local Data = {
-	{ key = "X",   value = 0, visible = true  },
-	{ key = "Y",   value = 0, visible = true  },
-	{ key = "Z",   value = 0, visible = true  },
-	{ key = "Dir", value = 0, visible = false }
+	{ key = "X",           value = 0, visible = true },
+	{ key = "Y",           value = 0, visible = true },
+	{ key = "Z",           value = 0, visible = true },
+	{ key = "Orientation", value = 0, visible = true }
 };
 
 function Module:GetDescription()
@@ -78,10 +78,10 @@ function HandleChatMessage(type, message)
 			-- We care about coordiantes
 			if Util:StartsWith(message, "X: ") then
 				local raw = Util:Split(message, " ");
-				SetModuleData("X",   raw[2]);
-				SetModuleData("Y",   raw[4]);
-				SetModuleData("Z",   raw[6]);
-				SetModuleData("Dir", raw[8]);
+				SetModuleData("X", raw[2]);
+				SetModuleData("Y", raw[4]);
+				SetModuleData("Z", raw[6]);
+				SetModuleData("Orientation", raw[8]);
 				UpdateUIFrame();
 			end
 
