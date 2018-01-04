@@ -8,11 +8,11 @@ local Module = core.Config.modules.morph;
 local UIMorph;
 
 function Module:GetDescription()
-  return "User interface for .morph command"
+  return "User interface for .morph command";
 end
 
 function Module:Enable()
-  local overlay = UIMorph or Create()
+  local overlay = UIMorph or Create();
   overlay:Show();
 end
 
@@ -27,11 +27,11 @@ end
 function Create()
   local pointer = 0;
 
-  UIMorph = CreateFrame("Frame", "atUIMorph")
+  UIMorph = CreateFrame("Frame", "AT_MORPH")
   UIMorph:SetPoint("LEFT", UIParent, "LEFT", 10, 250)
   UIMorph:SetSize(48, 128)
 
-  local InputPointer = CreateFrame("EditBox", "atInputPointer", UIMorph, "InputBoxTemplate")
+  local InputPointer = CreateFrame("EditBox", "AT_INPUT", UIMorph, "InputBoxTemplate")
   InputPointer:SetPoint("CENTER", UIMorph, "CENTER")
   InputPointer:SetWidth(48)
   InputPointer:SetHeight(24)
@@ -41,7 +41,7 @@ function Create()
     ExecMorph(InputPointer:GetNumber())
   end)
 
-  local BtnPlus = CreateFrame("Button", "atBtnPlus", UIMorph, "UIPanelButtonTemplate")
+  local BtnPlus = CreateFrame("Button", "AT_BTN_PLUS", UIMorph, "UIPanelButtonTemplate")
   BtnPlus:SetPoint("CENTER", UIMorph, "CENTER", 0, 25)
   BtnPlus:SetWidth(32)
   BtnPlus:SetHeight(24)
@@ -56,7 +56,7 @@ function Create()
     ExecMorph(pointer)
   end)
 
-  local BtnMinus = CreateFrame("Button", "atBtnMinus", UIMorph, "UIPanelButtonTemplate")
+  local BtnMinus = CreateFrame("Button", "ADD_BTN_MINUS", UIMorph, "UIPanelButtonTemplate")
   BtnMinus:SetPoint("CENTER", UIMorph, "CENTER", 0, -24)
   BtnMinus:SetWidth(32)
   BtnMinus:SetHeight(24)

@@ -3,6 +3,8 @@
 ## Notes: Collection of modules with various functionality
 ## Author: Filipsi
 
+util.lua
 config.lua
+modules\gps.lua
 modules\morph.lua
 init.lua

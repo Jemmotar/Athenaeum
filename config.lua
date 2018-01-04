@@ -1,26 +1,14 @@
---------------------------------------
--- Namespaces
---------------------------------------
-local _, core = ...;
+local _, core = ...; -- Namespace
 core.Config = {}; -- adds Config table to addon namespace
 local Config = core.Config;
-
---------------------------------------
--- Utilities
---------------------------------------
-
-function core:Print(...)
-	local prefix = string.format("|cff%s%s|r", "00ccff", "[Athenaeum]")
-	DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ...))
-end
+local Util = core.Util;
 
 --------------------------------------
 -- Modules
 --------------------------------------
 Config.modules = {
-	morph = {
-		enabled = false
-	}
+	morph = {},
+	gps = {}
 }
 
 function Config:ToggleModule(name)
@@ -29,23 +17,30 @@ function Config:ToggleModule(name)
 	end
 
 	local module = Config.modules[name];
+
+	-- Module used for first time
+	if module.enabled == nil then
+		module.enabled = false;
+	end
+
+	-- Toggle the module
 	module.enabled = not module.enabled;
 
+	-- Log result into the chat
 	name = string.format("|cff%s%s|r", "FF6A00", name)
-
 	if module.enabled then
 		local state = string.format("|cff%s%s|r", "48D80A", "enabled")
-		core:Print("Module " .. name .. " was " .. state .. ".")
+		Util:Print("Module " .. name .. " was " .. state .. ".")
 		module:Enable()
 	else
 		local state = string.format("|cff%s%s|r", "DB0000", "disabled")
-		core:Print("Module " .. name .. " was " .. state .. ".")
+		Util:Print("Module " .. name .. " was " .. state .. ".")
 		module:Disable()
 	end
 end
 
 function Config:PrintModules()
-	core:Print("Listing available modules...")
+	Util:Print("Listing available modules...")
 	for key, module in pairs(Config.modules) do
 		local name = string.format("|cff%s%s|r", "FF6A00", key)
 		DEFAULT_CHAT_FRAME:AddMessage("   " .. name .. " - " .. module:GetDescription())
