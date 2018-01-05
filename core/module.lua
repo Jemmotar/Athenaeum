@@ -32,35 +32,29 @@ function ModuleManager:Toggle(name)
 	local config = ModuleManager:GetConfig(name);
 
 	if config == nil then
+		Util:Print("Module " .. Util:Colorize(name, Util.Colors.module) .. " does not exist!");
 		return; -- Module not found
 	end
 
 	-- Toggle the module
 	config.enabled = not config.enabled;
 	ModuleManager:GetModule(name)[config.enabled and "Enable" or "Disable"]();
-	PrintStatusChange(name, config);
+	ModuleManager:PrintStatusChange(name, config.enabled);
 end
 
 function ModuleManager:PrintList()
 	Util:Print("Listing available modules...");
 
-	for key, module in pairs(modules) do
-		local name = string.format("|cff%s%s|r", "FF6A00", key);
-		DEFAULT_CHAT_FRAME:AddMessage("  " .. name .. " - " .. module:GetDescription());
+	for name, module in pairs(modules) do
+		DEFAULT_CHAT_FRAME:AddMessage("  " .. Util:Colorize(name, Util.Colors.module) .. " - " .. module:GetDescription());
 	end
 end
 
---------------------------------------
--- Local
---------------------------------------
-
-function PrintStatusChange(name, config)
-	local name = string.format("|cff%s%s|r", "FF6A00", name);
-	local state = string.format(
-		"|cff%s%s|r",
-		config.enabled and "48D80A" or "DB0000",
-		config.enabled and "enabled" or "disabled"
+function ModuleManager:PrintStatusChange(name, enabled)
+	local state = Util:Colorize(
+		enabled and "enabled" or "disabled",
+		enabled and Util.Colors.success or Util.Colors.failure
 	);
 
-	Util:Print("Module " .. name .. " was " .. state .. ".");
+	Util:Print("Module " .. Util:Colorize(name, Util.Colors.module) .. " was " .. state .. ".");
 end

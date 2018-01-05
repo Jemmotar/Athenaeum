@@ -4,11 +4,23 @@ Addon.Util = {};
 local Util = Addon.Util;
 
 --------------------------------------
+-- Tables
+--------------------------------------
+
+Util.Colors = {
+	athenaeum = "00CCFF",
+	success = "48D80A",
+	failure = "DB0000",
+	module = "FF6A00",
+	command = "FFE13A"
+}
+
+--------------------------------------
 -- Utilities
 --------------------------------------
 
 function Util:Print(...)
-	local prefix = string.format("|cff%s%s|r", "00ccff", "[Athenaeum]")
+	local prefix = string.format("|cff%s%s|r", Util.Colors.athenaeum, "[Athenaeum]")
 	DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ...))
 end
 
@@ -30,4 +42,8 @@ end
 function Util:Round(num, n)
 	local mult = 10 ^ (n or 0);
 	return math.floor(num * mult + 0.5) / mult;
+end
+
+function Util:Colorize(string, color)
+	return string.format("|cff%s%s|r", color, string);
 end

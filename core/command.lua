@@ -1,6 +1,7 @@
 local _, Addon = ...; -- Namespace
 Addon.Command = {};
 
+local Util = Addon.Util;
 local Command = Addon.Command;
 
 --------------------------------------
@@ -26,22 +27,27 @@ function Command:Init(event, name)
 		_G["ChatFrame"..i.."EditBox"]:SetAltArrowKeyMode(false);
 	end
 
-	SLASH_RELOADUI1 = "/rl"; -- shorthand for reloading UI
+	-- shorthand for reloading UI
+	SLASH_RELOADUI1 = "/rl";
 	SlashCmdList.RELOADUI = ReloadUI;
 
-	SLASH_FRAMESTK1 = "/fs"; -- command for showing framestack tool
+	-- command for showing framestack tool
+	SLASH_FRAMESTK1 = "/fs";
 	SlashCmdList.FRAMESTK = function()
 		LoadAddOn("Blizzard_DebugTools");
 		FrameStackTooltip_Toggle();
 	end
 
-	SLASH_Athenaeum1 = "/at"; -- addon root command
+ 	-- addon root command
+	SLASH_Athenaeum1 = "/at";
 	SlashCmdList.Athenaeum = HandleCommand;
 end
 
 function HandleCommand(str)
 	if (#str == 0) then
-		return; -- User just entered "/at" with no additional args.
+		 -- User just entered "/at" with no additional args.
+		Util:Print("Command " .. Util:Colorize("/at", Util.Colors.command) .. " without any arguments is not valid.");
+		return;
 	end
 
 	local args = {};
@@ -65,6 +71,7 @@ function HandleCommand(str)
 					path = path[arg]; -- another sub-table found!
 				end
 			else
+				Util:Print("Command " .. Util:Colorize("/at " .. str, Util.Colors.command) .. " does not exist.");
 				return; -- does not exist!
 			end
 		end
@@ -75,6 +82,6 @@ end
 -- Initialization hook
 ----------------------------------
 
-local events = CreateFrame("Frame");
-events:RegisterEvent("ADDON_LOADED");
-events:SetScript("OnEvent", Command.Init);
+local Events = CreateFrame("Frame");
+Events:RegisterEvent("ADDON_LOADED");
+Events:SetScript("OnEvent", Command.Init);
