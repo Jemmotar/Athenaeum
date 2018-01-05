@@ -26,7 +26,26 @@ function Module:Enable()
 	end
 
 	-- Hijack chat event dispatcher with our middleware
-	ChatFrame_MessageEventHandler = Module.ChatFrameMiddleware;
+	ChatFrame_MessageEventHandler = function(event, ...)
+		if Module:IsGpsMessage(arg1) then
+					-- We care about coordiantes
+					if Util:StartsWith(arg1, "X: ") then
+						local raw = Util:Split(arg1, " ");
+						Module:SetData("X", raw[2]);
+						Module:SetData("Y", raw[4]);
+						Module:SetData("Z", raw[6]);
+						Module:SetData("Orientation", raw[8]);
+						Module:UpdateUIFrame();
+					end
+
+					-- When module is enabled we will not show any .gps message in chat
+					-- this gets rid of command spam
+					return;
+		end
+
+		-- Dispach original events after it is handled by addon
+		return OriginalChatHandler(event, ...);
+	end
 
 	local frame = UIFrame or Module:CreateUIFrame();
 	frame:Show();
@@ -43,36 +62,14 @@ end
 -- Logic
 --------------------------------------
 
-function Module:ChatFrameMiddleware(type, message, ...)
-	if Module:IsGpsMessage(type, message) then
-			-- We care about coordiantes
-			if Util:StartsWith(message, "X: ") then
-				local raw = Util:Split(message, " ");
-				Module:SetData("X", raw[2]);
-				Module:SetData("Y", raw[4]);
-				Module:SetData("Z", raw[6]);
-				Module:SetData("Orientation", raw[8]);
-				Module:UpdateUIFrame();
-			end
-
-			-- When module is enabled we will not show any .gps message in chat
-			-- this gets rid of command spam
-			return;
-	end
-
-	-- Dispach original events after it is handled by addon
-	return OriginalChatHandler(type, message, ...);
-end
-
-function Module:IsGpsMessage(type, message)
-	return type == "CHAT_MSG_SYSTEM" and (
-		Util:StartsWith(message, "no VMAP") or -- I know, this could be looped in list but I don't think .gps command will change any time soon
-		Util:StartsWith(message, "Map:") or
-		Util:StartsWith(message, "grid[") or
-		Util:StartsWith(message, "X: ") or
-		Util:StartsWith(message, " ZoneX:") or
-		Util:StartsWith(message, "GroundZ:")
-	);
+function Module:IsGpsMessage(message)
+	return Util:StartsWith(message, "no VMAP") or -- I know, this could be looped in list but I don't think .gps command will change any time soon
+				 Util:StartsWith(message, "You are outdoors.") or
+				 Util:StartsWith(message, "Map:") or
+			   Util:StartsWith(message, "grid[") or
+				 Util:StartsWith(message, "X: ") or
+				 Util:StartsWith(message, " ZoneX:") or
+				 Util:StartsWith(message, "GroundZ:");
 end
 
 function Module:SetData(key, value)
@@ -90,7 +87,7 @@ end
 
 function Module:CreateUIFrame()
 	UIFrame = CreateFrame("Frame", "AT_GPS");
-	UIFrame:SetPoint("RIGHT", UIParent, "RIGHT", 0, 200);
+	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -148, -124);
 	UIFrame:SetSize(155, 64);
 
 	UIFrame.Text = UIFrame:CreateFontString(UIFrame:GetName() .. "_TEXT", "OVERLAY", "GameFontNormal");
