@@ -1,6 +1,7 @@
-local _, core = ...; -- Namespace
-core.Util = {}; -- adds Util table to addon namespace
-local Util = core.Util;
+local _, Addon = ...; -- Namespace
+Addon.Util = {};
+
+local Util = Addon.Util;
 
 --------------------------------------
 -- Utilities
@@ -12,7 +13,7 @@ function Util:Print(...)
 end
 
 function Util:StartsWith(str, needle)
-   return string.sub(str, 1, string.len(needle)) == needle;
+	 return string.sub(str, 1, string.len(needle)) == needle;
 end
 
 function Util:Split(str, separator)
@@ -27,6 +28,6 @@ function Util:Split(str, separator)
 end
 
 function Util:Round(num, n)
-  local mult = 10 ^ (n or 0);
-  return math.floor(num * mult + 0.5) / mult;
+	local mult = 10 ^ (n or 0);
+	return math.floor(num * mult + 0.5) / mult;
 end
