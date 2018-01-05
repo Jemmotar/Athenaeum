@@ -10,10 +10,20 @@ local Util = Addon.Util;
 --------------------------------------
 
 local modules = {};
+
 -- Copy keys for the list from config
 -- This creates workspace for every module defined in config
 for key,_ in pairs(Config.modules) do
 	modules[key] = {};
+end
+
+function ModuleManager:Init()
+	-- Enable all modules that are loaded with enabled flag set to true
+	for name,module in pairs(modules) do
+		if ModuleManager:GetConfig(name).enabled then
+			module:Enable();
+		end
+	end
 end
 
 --------------------------------------
@@ -29,6 +39,11 @@ function ModuleManager:GetConfig(name)
 end
 
 function ModuleManager:Toggle(name)
+	if name == nil then
+		Util:Print("Command " .. Util:Colorize("/at module", Util.Colors.command) .. " is not valid without module name as first argument.");
+		return;
+	end
+
 	local config = ModuleManager:GetConfig(name);
 
 	if config == nil then

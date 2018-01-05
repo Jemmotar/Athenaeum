@@ -13,12 +13,13 @@ function Module:GetDescription()
 end
 
 function Module:Enable()
-	local overlay = UIFrame or Module:CreateUIFrame();
-	overlay:Show();
+	local ui = UIFrame or Module:CreateUIFrame();
+	ui:Show();
 end
 
 function Module:Disable()
-	UIFrame:Hide();
+	local ui = UIFrame or Module:CreateUIFrame();
+	ui:Hide();
 end
 
 --------------------------------------

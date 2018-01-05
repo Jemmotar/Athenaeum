@@ -9,12 +9,23 @@ local Util = core.Util;
 
 local OriginalChatHandler;
 local UIFrame;
+
 local Data = {
 	{ key = "X",           value = 0 },
 	{ key = "Y",           value = 0 },
 	{ key = "Z",           value = 0 },
 	{ key = "Orientation", value = 0 }
 };
+
+local GpsLineParts = {
+	"no VMAP",
+	"You are outdoors.",
+	"Map:",
+	"grid[",
+	"X: ",
+	" ZoneX:",
+	"GroundZ:"
+}
 
 function Module:GetDescription()
 	return "User interface for .gps command";
@@ -47,15 +58,18 @@ function Module:Enable()
 		return OriginalChatHandler(event, ...);
 	end
 
-	local frame = UIFrame or Module:CreateUIFrame();
-	frame:Show();
+	local ui = UIFrame or Module:CreateUIFrame();
+	ui:Show();
 end
 
 function Module:Disable()
 	-- Remove our middleware from chat
-	ChatFrame_MessageEventHandler = OriginalChatHandler;
+	if OriginalChatHandler ~= nil then
+		ChatFrame_MessageEventHandler = OriginalChatHandler;
+	end
 
-	UIFrame:Hide();
+	local ui = UIFrame or Module:CreateUIFrame();
+	ui:Hide();
 end
 
 --------------------------------------
@@ -63,13 +77,17 @@ end
 --------------------------------------
 
 function Module:IsGpsMessage(message)
-	return Util:StartsWith(message, "no VMAP") or -- I know, this could be looped in list but I don't think .gps command will change any time soon
-				 Util:StartsWith(message, "You are outdoors.") or
-				 Util:StartsWith(message, "Map:") or
-			   Util:StartsWith(message, "grid[") or
-				 Util:StartsWith(message, "X: ") or
-				 Util:StartsWith(message, " ZoneX:") or
-				 Util:StartsWith(message, "GroundZ:");
+	if message == nil then
+		return false;
+	end
+
+	for _,part in pairs(GpsLineParts) do
+		if Util:StartsWith(message, part) then
+			return true;
+		end
+	end
+
+	return false;
 end
 
 function Module:SetData(key, value)
@@ -106,9 +124,6 @@ function Module:CreateUIFrame()
 	    end
 	end)
 	UIFrame.Interval:Show();
-
-	-- Get initial data
-	SendChatMessage(".gps");
 
 	UIFrame:Hide();
 	return UIFrame;

@@ -17,16 +17,7 @@ Command.list = {
 -- Logic
 ----------------------------------
 
-function Command:Init(event, name)
-	if (name ~= "Athenaeum") then
-		return;
-	end
-
-	-- allows for arrow buttons to move through chat 'edit' box
-	for i = 1, NUM_CHAT_WINDOWS do
-		_G["ChatFrame"..i.."EditBox"]:SetAltArrowKeyMode(false);
-	end
-
+function Command:Init()
 	-- shorthand for reloading UI
 	SLASH_RELOADUI1 = "/rl";
 	SlashCmdList.RELOADUI = ReloadUI;
@@ -77,11 +68,3 @@ function HandleCommand(str)
 		end
 	end
 end
-
-----------------------------------
--- Initialization hook
-----------------------------------
-
-local Events = CreateFrame("Frame");
-Events:RegisterEvent("ADDON_LOADED");
-Events:SetScript("OnEvent", Command.Init);
