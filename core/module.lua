@@ -13,7 +13,7 @@ local modules = {};
 
 -- Copy keys for the list from config
 -- This creates workspace for every module defined in config
-for key,_ in pairs(Config.modules) do
+for key,_ in pairs(Config.Properties) do
 	modules[key] = {};
 end
 
@@ -30,31 +30,31 @@ end
 -- Modules
 --------------------------------------
 
-function ModuleManager:GetModule(name)
-	return modules[name];
+function ModuleManager:GetModule(module)
+	return modules[module];
 end
 
-function ModuleManager:GetConfig(name)
-	return Config.modules[name];
+function ModuleManager:GetConfig(module)
+	return GlobalConfiguration[module];
 end
 
-function ModuleManager:Toggle(name)
-	if name == nil then
-		Util:Print("Command " .. Util:Colorize("/at module", Util.Colors.command) .. " is not valid without module name as first argument.");
+function ModuleManager:Toggle(module)
+	if module == nil then
+		Util:Print("Command " .. Util:Colorize("/at module [name]", Util.Colors.command) .. " is not valid without module name as first argument.");
 		return;
 	end
 
-	local config = ModuleManager:GetConfig(name);
+	local config = ModuleManager:GetConfig(module);
 
 	if config == nil then
-		Util:Print("Module " .. Util:Colorize(name, Util.Colors.module) .. " does not exist!");
+		Util:Print("Module " .. Util:Colorize(module, Util.Colors.module) .. " does not exist!");
 		return; -- Module not found
 	end
 
 	-- Toggle the module
 	config.enabled = not config.enabled;
-	ModuleManager:GetModule(name)[config.enabled and "Enable" or "Disable"]();
-	ModuleManager:PrintStatusChange(name, config.enabled);
+	ModuleManager:GetModule(module)[config.enabled and "Enable" or "Disable"]();
+	ModuleManager:PrintStatusChange(module, config.enabled);
 end
 
 function ModuleManager:PrintList()
@@ -65,11 +65,11 @@ function ModuleManager:PrintList()
 	end
 end
 
-function ModuleManager:PrintStatusChange(name, enabled)
+function ModuleManager:PrintStatusChange(module, enabled)
 	local state = Util:Colorize(
 		enabled and "enabled" or "disabled",
 		enabled and Util.Colors.success or Util.Colors.failure
 	);
 
-	Util:Print("Module " .. Util:Colorize(name, Util.Colors.module) .. " was " .. state .. ".");
+	Util:Print("Module " .. Util:Colorize(module, Util.Colors.module) .. " was " .. state .. ".");
 end

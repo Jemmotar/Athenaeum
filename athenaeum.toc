@@ -2,6 +2,7 @@
 ## Title : Athenaeum
 ## Notes: Collection of modules with various functionality
 ## Author: Filipsi
+## SavedVariables: GlobalConfiguration
 
 core\util.lua
 core\config.lua

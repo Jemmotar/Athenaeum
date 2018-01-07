@@ -9,8 +9,9 @@ local Command = Addon.Command;
 --------------------------------------
 
 Command.list = {
-	["module"] = Addon.ModuleManager.Toggle,
-	["list"] = Addon.ModuleManager.PrintList
+	[ "module" ] = Addon.ModuleManager.Toggle,
+	[ "list"   ] = Addon.ModuleManager.PrintList,
+	[ "config" ] = Addon.Config.HandleConfigCommand
 };
 
 ----------------------------------

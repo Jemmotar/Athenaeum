@@ -7,13 +7,14 @@ local Init = Addon.Init;
 -- Initialization
 ----------------------------------
 
-local parts = {
-	Addon.Command,
-	Addon.ModuleManager
+local Parts = {
+	Addon.Config,
+	Addon.ModuleManager,
+	Addon.Command
 };
 
 function Init:InitializeAddon(event, name)
-	if (name ~= "Athenaeum") then
+	if name ~= "Athenaeum" then
 		return;
 	end
 
@@ -23,7 +24,7 @@ function Init:InitializeAddon(event, name)
 	end
 
 	-- Initialize addon parts one by one
-	for _, part in pairs(parts) do
+	for _, part in pairs(Parts) do
 		part:Init();
 	end
 end

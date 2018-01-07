@@ -1,7 +1,7 @@
-local _, core = ...; -- Namespace
+local _, Addon = ...; -- Namespace
 
-local Module = core.ModuleManager:GetModule("gps");
-local Util = core.Util;
+local Module = Addon.ModuleManager:GetModule("gps");
+local Util = Addon.Util;
 
 --------------------------------------
 -- Module
@@ -60,6 +60,9 @@ function Module:Enable()
 
 	local ui = UIFrame or Module:CreateUIFrame();
 	ui:Show();
+
+	-- Get initial data
+	SendChatMessage(".gps");
 end
 
 function Module:Disable()
@@ -103,9 +106,24 @@ end
 -- UI
 --------------------------------------
 
+function Module.OnConfigChange(propertyName, propertyValue)
+	if propertyName == "refreshRate" then
+		UIFrame.Interval.value = propertyValue;
+		return;
+	end
+
+	if propertyName == "frameX" or propertyName == "frameY" then
+		local ModuleConfig = Addon.ModuleManager:GetConfig("gps");
+		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.frameX, ModuleConfig.frameY);
+	end
+end
+
 function Module:CreateUIFrame()
+	Addon.Config:SubscribePropertyChange("gps", Module.OnConfigChange);
+	local ModuleConfig = Addon.ModuleManager:GetConfig("gps");
+
 	UIFrame = CreateFrame("Frame", "AT_GPS");
-	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -148, -124);
+	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.frameX, ModuleConfig.frameY);
 	UIFrame:SetSize(155, 64);
 
 	UIFrame.Text = UIFrame:CreateFontString(UIFrame:GetName() .. "_TEXT", "OVERLAY", "GameFontNormal");
@@ -115,7 +133,7 @@ function Module:CreateUIFrame()
 	-- Create timer that will periodicly send .gps commdns via chat
 	-- No need to worry about stoping the timer, it will tick only when main frame is visible
 	UIFrame.Interval = CreateFrame("Frame", UIFrame:GetName() .. "_INTERVAL", UIFrame);
-	UIFrame.Interval.value = 3; -- Update internal in seconds
+	UIFrame.Interval.value = ModuleConfig.refreshRate; -- Update internal in seconds
 	UIFrame.Interval:SetScript("OnUpdate", function(self, elapsed)
 	    self.elapsed = (self.elapsed or 0) + elapsed;
 	    if self.elapsed >= self.value then
@@ -133,7 +151,7 @@ function Module:UpdateUIFrame()
 	local text = "";
 
 	for _, entry in pairs(Data) do
-		text = text .. entry.key .. ": " .. Util:Round(entry.value, 2) .. "\n";
+		text = text .. entry.key .. ": " .. Util:Round(entry.value, Addon.ModuleManager:GetConfig("gps").accuracy) .. "\n";
 	end
 
 	UIFrame.Text:SetText(text);

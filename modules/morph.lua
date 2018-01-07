@@ -1,5 +1,6 @@
-local _, core = ...; -- Namespace
-local Module = core.ModuleManager:GetModule("morph");
+local _, Addon = ...; -- Namespace
+
+local Module = Addon.ModuleManager:GetModule("morph");
 
 --------------------------------------
 -- Module
@@ -40,9 +41,19 @@ end
 -- UI
 --------------------------------------
 
+function Module.OnConfigChange(propertyName, propertyValue)
+	if propertyName == "frameX" or propertyName == "frameY" then
+		local ModuleConfig = Addon.ModuleManager:GetConfig("morph");
+		UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.frameX, ModuleConfig.frameY);
+	end
+end
+
 function Module:CreateUIFrame()
+	Addon.Config:SubscribePropertyChange("morph", Module.OnConfigChange);
+	local ModuleConfig = Addon.ModuleManager:GetConfig("morph");
+
 	UIFrame = CreateFrame("Frame", "AT_MORPH");
-	UIFrame:SetPoint("LEFT", UIParent, "LEFT", 10, 250);
+	UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.frameX, ModuleConfig.frameY);
 	UIFrame:SetSize(48, 128);
 
 	UIFrame.Input = CreateFrame("EditBox", "AT_INPUT", UIFrame, "InputBoxTemplate");

@@ -12,7 +12,8 @@ Util.Colors = {
 	success = "48D80A",
 	failure = "DB0000",
 	module = "FF6A00",
-	command = "FFE13A"
+	command = "FFE13A",
+	property = "CA60FF"
 }
 
 --------------------------------------
