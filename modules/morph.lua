@@ -42,9 +42,9 @@ end
 --------------------------------------
 
 function Module.OnConfigChange(propertyName, propertyValue)
-	if propertyName == "frameX" or propertyName == "frameY" then
+	if propertyName == "x" or propertyName == "y" then
 		local ModuleConfig = Addon.ModuleManager:GetConfig("morph");
-		UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.frameX, ModuleConfig.frameY);
+		UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.x, ModuleConfig.y);
 	end
 end
 
@@ -53,7 +53,7 @@ function Module:CreateUIFrame()
 	local ModuleConfig = Addon.ModuleManager:GetConfig("morph");
 
 	UIFrame = CreateFrame("Frame", "AT_MORPH");
-	UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.frameX, ModuleConfig.frameY);
+	UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.x, ModuleConfig.y);
 	UIFrame:SetSize(48, 128);
 
 	UIFrame.Input = CreateFrame("EditBox", "AT_INPUT", UIFrame, "InputBoxTemplate");

@@ -107,14 +107,14 @@ end
 --------------------------------------
 
 function Module.OnConfigChange(propertyName, propertyValue)
-	if propertyName == "refreshRate" then
+	if propertyName == "refresh" then
 		UIFrame.Interval.value = propertyValue;
 		return;
 	end
 
-	if propertyName == "frameX" or propertyName == "frameY" then
+	if propertyName == "x" or propertyName == "y" then
 		local ModuleConfig = Addon.ModuleManager:GetConfig("gps");
-		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.frameX, ModuleConfig.frameY);
+		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.x, ModuleConfig.y);
 	end
 end
 
@@ -123,7 +123,7 @@ function Module:CreateUIFrame()
 	local ModuleConfig = Addon.ModuleManager:GetConfig("gps");
 
 	UIFrame = CreateFrame("Frame", "AT_GPS");
-	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.frameX, ModuleConfig.frameY);
+	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.x, ModuleConfig.y);
 	UIFrame:SetSize(155, 64);
 
 	UIFrame.Text = UIFrame:CreateFontString(UIFrame:GetName() .. "_TEXT", "OVERLAY", "GameFontNormal");

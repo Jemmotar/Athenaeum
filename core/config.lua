@@ -9,27 +9,80 @@ local Util = Addon.Util;
 -- Configuration
 --------------------------------------
 
-Config.Subscribers = {};
-
 Config.Properties = {
 	morph = {
-		{ name = "enabled",     default = false, isConfigurable = false, isPreserved = false },
-		{ name = "frameX",      default = 10,    isConfigurable = true,  isPreserved = true  },
-		{ name = "frameY",      default = 250,   isConfigurable = true,  isPreserved = true  }
+		{
+			name = "x",
+			default = 10
+		},
+		{
+			name = "y",
+			default = 250
+		}
 	},
 	gps = {
-		{ name = "enabled",     default = false, isConfigurable = false, isPreserved = false },
-		{ name = "refreshRate", default = 3,     isConfigurable = true,  isPreserved = true  },
-		{ name = "accuracy",    default = 2,     isConfigurable = true,  isPreserved = true  },
-		{ name = "frameX",      default = -148,  isConfigurable = true,  isPreserved = true  },
-		{ name = "frameY",      default = -124,  isConfigurable = true,  isPreserved = true  }
+		{
+			name = "refresh",
+			default = 3
+		},
+		{
+			name = "accuracy",
+			default = 2
+		},
+		{
+			name = "x",
+			default = -148
+		},
+		{
+			name = "y",
+			default = -124
+		}
 	}
 }
+
+Config.DefaultPropertyKeys = {
+	isConfigurable = true,
+	isPreserved = true
+};
+
+Config.PropertyEnabled = {
+	name = "enabled",
+	default = false,
+	isConfigurable = false,
+	isPreserved = false
+};
+
+Config.Subscribers = {};
 
 function Config:Init()
 	-- Create saved variable object for config (first time addon is instaled)
 	if GlobalConfiguration == nil then
 		GlobalConfiguration = {};
+	end
+
+	for module,presets in pairs(Config.Properties) do
+		local hasEnabledProperty = false;
+
+		for _,property in pairs(presets) do
+			if property.name == "enabled" then
+				hasEnabledProperty = true;
+				return;
+			end
+
+			-- Make sure every property has default keys
+			-- If not copy then from DefaultPropertyKeys
+			for pKey, pValue in pairs(Config.DefaultPropertyKeys) do
+				if property[pKey] == nil then
+					property[pKey] = pValue;
+				end
+			end
+		end
+
+		-- Make sure every module has enabled property
+		-- If not, use default one
+		if not hasEnabledProperty then
+			table.insert(presets, Config.PropertyEnabled);
+		end
 	end
 
 	for module,presets in pairs(Config.Properties) do
