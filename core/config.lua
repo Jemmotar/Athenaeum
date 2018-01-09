@@ -13,7 +13,7 @@ Config.Properties = {
 	morph = {
 		{
 			name = "x",
-			default = 10,
+			default = 10
 		},
 		{
 			name = "y",
@@ -32,6 +32,14 @@ Config.Properties = {
 	},
 	gps = {
 		{
+			name = "x",
+			default = -148
+		},
+		{
+			name = "y",
+			default = -124
+		},
+		{
 			name = "refresh",
 			default = 3,
 			validate = Util.Validation.IsPositive
@@ -42,12 +50,20 @@ Config.Properties = {
 			validate = Util.Validation.IsPositive
 		},
 		{
-			name = "x",
-			default = -148
+			name = "show-x",
+			default = true
 		},
 		{
-			name = "y",
-			default = -124
+			name = "show-y",
+			default = true
+		},
+		{
+			name = "show-z",
+			default = true
+		},
+		{
+			name = "show-orientation",
+			default = true
 		}
 	}
 }

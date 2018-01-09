@@ -11,21 +11,11 @@ local OriginalChatHandler;
 local UIFrame;
 
 local Data = {
-	{ key = "X",           value = 0 },
-	{ key = "Y",           value = 0 },
-	{ key = "Z",           value = 0 },
-	{ key = "Orientation", value = 0 }
+	{ key = "x",           value = 0 },
+	{ key = "y",           value = 0 },
+	{ key = "z",           value = 0 },
+	{ key = "orientation", value = 0 }
 };
-
-local GpsLineParts = {
-	"no VMAP",
-	"You are outdoors.",
-	"Map:",
-	"grid[",
-	"X: ",
-	" ZoneX:",
-	"GroundZ:"
-}
 
 function Module:GetDescription()
 	return "User interface for .gps command";
@@ -42,10 +32,10 @@ function Module:Enable()
 					-- We care about coordiantes
 					if Util:StartsWith(arg1, "X: ") then
 						local raw = Util:Split(arg1, " ");
-						Module:SetData("X", raw[2]);
-						Module:SetData("Y", raw[4]);
-						Module:SetData("Z", raw[6]);
-						Module:SetData("Orientation", raw[8]);
+						Module:SetData("x", raw[2]);
+						Module:SetData("y", raw[4]);
+						Module:SetData("z", raw[6]);
+						Module:SetData("orientation", raw[8]);
 						Module:UpdateUIFrame();
 					end
 
@@ -78,6 +68,16 @@ end
 --------------------------------------
 -- Logic
 --------------------------------------
+
+local GpsLineParts = {
+	"X: ",
+	"no VMAP",
+	"You are outdoors.",
+	"Map:",
+	"grid[",
+	" ZoneX:",
+	"GroundZ:"
+}
 
 function Module:IsGpsMessage(message)
 	if message == nil then
@@ -148,10 +148,14 @@ function Module:CreateUIFrame()
 end
 
 function Module:UpdateUIFrame()
+	local config = Addon.ModuleManager:GetConfig("gps");
 	local text = "";
 
 	for _, entry in pairs(Data) do
-		text = text .. entry.key .. ": " .. Util:Round(entry.value, Addon.ModuleManager:GetConfig("gps").accuracy) .. "\n";
+		local showKey = config["show-" .. entry.key];
+		if showKey or showKey == nil then
+			text = text .. Util:Capitalize(entry.key) .. ": " .. Util:Round(entry.value, config.accuracy) .. "\n";
+		end
 	end
 
 	UIFrame.Text:SetText(text);

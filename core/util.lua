@@ -60,6 +60,10 @@ function Util:Round(num, n)
 	return math.floor(num * mult + 0.5) / mult;
 end
 
-function Util:Colorize(string, color)
-	return string.format("|cff%s%s|r", color, string);
+function Util:Colorize(str, color)
+	return string.format("|cff%s%s|r", color, str);
+end
+
+function Util:Capitalize(str)
+    return (str:gsub("^%l", string.upper))
 end

@@ -16,6 +16,7 @@ In order to toggle module in-game use `/at module [name]` command.
 
 A user-interface for the .morph command that changes the model of the selected entity.
 You can quickly change and preview modules in-game.
+
 Left clicking on buttons changes model ID by one, right-clicking by 10, this can be changed in the configuration using `/at config morph step [value]` and `/at config morph jump [value]` commands.
 
 To enable/disable this module use `/at module morph` command.
@@ -34,6 +35,6 @@ To list configuration properties of this module use `/at config gps` command.
 ## Configuration
 
 Most modules have properties that can be changed in-game using configuration commands.
-In order to list configuration properties of all modules use `/at config` command, to list properties of given module use `/at config [module]`.
+To list configuration properties of all modules use `/at config` command, to list properties of given module use `/at config [module]`.
 Properties can be set by using `/at config [module] [property] [value]` command.
 Any property can be reset to default value by `/at config [module] [property] default`.
