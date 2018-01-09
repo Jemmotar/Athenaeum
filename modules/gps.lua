@@ -126,6 +126,10 @@ function Module:CreateUIFrame()
 	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.x, ModuleConfig.y);
 	UIFrame:SetSize(155, 64);
 
+	UIFrame.TargetText = UIFrame:CreateFontString(UIFrame:GetName() .. "_TARGETTEXT", "OVERLAY", "GameFontGreen");
+	UIFrame.TargetText:SetPoint("CENTER", UIFrame, 0, UIFrame:GetHeight() / 2);
+	UIFrame.TargetText:SetText("");
+
 	UIFrame.Text = UIFrame:CreateFontString(UIFrame:GetName() .. "_TEXT", "OVERLAY", "GameFontNormal");
 	UIFrame.Text:SetAllPoints();
 	UIFrame.Text:SetText("");
@@ -150,6 +154,14 @@ end
 function Module:UpdateUIFrame()
 	local config = Addon.ModuleManager:GetConfig("gps");
 	local text = "";
+
+	if UnitExists("target") then
+		if not UnitIsUnit("target", "player") then
+			UIFrame.TargetText:SetText("[" .. UnitName("target") .. "]");
+		else
+			UIFrame.TargetText:SetText("");
+		end
+	end
 
 	for _, entry in pairs(Data) do
 		local showKey = config["show-" .. entry.key];
