@@ -13,21 +13,33 @@ Config.Properties = {
 	morph = {
 		{
 			name = "x",
-			default = 10
+			default = 10,
 		},
 		{
 			name = "y",
 			default = 250
+		},
+		{
+			name = "step",
+			default = 1,
+			validate = Util.Validation.IsPositive
+		},
+		{
+			name = "jump",
+			default = 10,
+			validate = Util.Validation.IsPositive
 		}
 	},
 	gps = {
 		{
 			name = "refresh",
-			default = 3
+			default = 3,
+			validate = Util.Validation.IsPositive
 		},
 		{
 			name = "accuracy",
-			default = 2
+			default = 2,
+			validate = Util.Validation.IsPositive
 		},
 		{
 			name = "x",
@@ -66,11 +78,10 @@ function Config:Init()
 		for _,property in pairs(presets) do
 			if property.name == "enabled" then
 				hasEnabledProperty = true;
-				return;
 			end
 
 			-- Make sure every property has default keys
-			-- If not copy then from DefaultPropertyKeys
+			-- If not, copy them from DefaultPropertyKeys
 			for pKey, pValue in pairs(Config.DefaultPropertyKeys) do
 				if property[pKey] == nil then
 					property[pKey] = pValue;
@@ -79,7 +90,7 @@ function Config:Init()
 		end
 
 		-- Make sure every module has enabled property
-		-- If not, use default one
+		-- If not, use default enabled property
 		if not hasEnabledProperty then
 			table.insert(presets, Config.PropertyEnabled);
 		end
@@ -122,8 +133,13 @@ end
 
 function Config:EmittPropertyChange(moduleName, propertyName)
 	local propertyValue = GlobalConfiguration[moduleName][propertyName];
+	local moduleSubscribers = Config.Subscribers[moduleName];
 
-	for _,subscriber in ipairs(Config.Subscribers[moduleName]) do
+	if moduleSubscribers == nil then
+		return -- there are no subscribers registered
+	end
+
+	for _,subscriber in pairs(moduleSubscribers) do
 		subscriber(propertyName, propertyValue);
 	end
 end
@@ -199,10 +215,18 @@ function Config:HandleConfigCommand(moduleName, propertyName, propertyValue)
 			propertyValue = propertyValue == "true" and true or false;
 		end
 
+		-- If property has validation, test it
+		if propertyEntry.validate ~= nil then
+			if not propertyEntry.validate.test(propertyValue) then
+				Util:Print("Property " .. Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(propertyName, Util.Colors.property) .. " accepts only " .. Util:Colorize(propertyEntry.validate.name, Util.Colors.failure) .. ".");
+				return;
+			end
+		end
+
 		GlobalConfiguration[moduleName][propertyName] = propertyValue;
 		Config:EmittPropertyChange(moduleName, propertyName);
 		Util:Print("Property " ..  Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(propertyName, Util.Colors.property) .. " was set to " .. Util:Colorize(tostring(propertyValue), Util.Colors.success) .. ".");
 	else
-		Util:Print("Property " .. Util:Colorize(propertyName, Util.Colors.property) .. " supports only " .. Util:Colorize(desiredType, Util.Colors.failure) .. " value type.");
+		Util:Print("Property " .. Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(propertyName, Util.Colors.property) .. " supports only " .. Util:Colorize(desiredType, Util.Colors.failure) .. " value type.");
 	end
 end

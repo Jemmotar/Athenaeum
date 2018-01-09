@@ -16,6 +16,21 @@ Util.Colors = {
 	property = "CA60FF"
 }
 
+Util.Validation = {
+	IsPositive = {
+		name = "positive number",
+		test = function(input)
+			return input > 0;
+		end
+	},
+	IsPositiveOrZero = {
+		name = "positive number or zero",
+		test = function(input)
+			return input >= 0;
+		end,
+	}
+}
+
 --------------------------------------
 -- Utilities
 --------------------------------------

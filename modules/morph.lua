@@ -74,9 +74,9 @@ function Module:CreateUIFrame()
 	UIFrame.ButtonPlus:RegisterForClicks("LeftButtonUp, RightButtonUp");
 	UIFrame.ButtonPlus:SetScript("OnMouseUp", function(self, button)
 		if button == "LeftButton" then
-			MorphModelId = MorphModelId + 1;
+			MorphModelId = MorphModelId + ModuleConfig.step;
 		else
-			MorphModelId = MorphModelId + 10;
+			MorphModelId = MorphModelId + ModuleConfig.jump;
 		end
 		Module:ExecMorph(MorphModelId);
 	end);
@@ -90,11 +90,11 @@ function Module:CreateUIFrame()
 	UIFrame.ButtonMinus:SetScript("OnMouseUp", function(self, button)
 		if button == "LeftButton" then
 			if MorphModelId > 0 then
-				MorphModelId = MorphModelId - 1;
+				MorphModelId = MorphModelId - ModuleConfig.step;
 			end
 		else
-			if MorphModelId > 10 then
-				MorphModelId = MorphModelId - 10;
+			if MorphModelId > ModuleConfig.jump then
+				MorphModelId = MorphModelId - ModuleConfig.jump;
 			else
 				MorphModelId = 0;
 			end
