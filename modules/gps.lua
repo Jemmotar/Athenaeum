@@ -156,7 +156,7 @@ function Module:UpdateUIFrame()
 	local text = "";
 
 	if UnitExists("target") then
-		if not UnitIsUnit("target", "player") then
+		if not UnitIsUnit("target", "player") and config["show-target"] then
 			UIFrame.TargetText:SetText("[" .. UnitName("target") .. "]");
 		else
 			UIFrame.TargetText:SetText("");

@@ -64,6 +64,10 @@ Config.Properties = {
 		{
 			name = "show-orientation",
 			default = true
+		},
+		{
+			name = "show-target",
+			default = true
 		}
 	}
 }

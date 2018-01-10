@@ -27,6 +27,7 @@ To list configuration properties of this module use `/at config morph` command.
 A user-interface for the .gps command that shows the on-screen overlay with selected entity coordinates and orientation.
 
 Refresh interval is 3 seconds by default, use `/at config refresh [value]` command to change it.
+What property is visible in the overlay can be set using `/at config show-[property] [true/false]` command.
 Coordinates rounding accuracy can be changed using `/at config accuracy [value]` command.
 
 To enable/disable this module use `/at module gps` command.
