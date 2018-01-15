@@ -23,6 +23,12 @@ function Module:Disable()
 	ui:Hide();
 end
 
+function Module.OnConfigChange(propertyName, propertyValue)
+	if propertyName == "x" or propertyName == "y" then
+		UIFrame:SetPoint("LEFT", UIParent, "LEFT", Module.config.x, Module.config.y);
+	end
+end
+
 --------------------------------------
 -- Logic
 --------------------------------------
@@ -37,19 +43,11 @@ function Module:ExecMorph(id)
 	SendChatMessage(".morph " .. id);
 end
 
-function Module.OnConfigChange(propertyName, propertyValue)
-	if propertyName == "x" or propertyName == "y" then
-		UIFrame:SetPoint("LEFT", UIParent, "LEFT", Module.config.x, Module.config.y);
-	end
-end
-
 --------------------------------------
 -- UI
 --------------------------------------
 
 function Module:CreateUIFrame()
-	Addon.Config:SubscribePropertyChange("morph", Module.OnConfigChange);
-
 	UIFrame = CreateFrame("Frame", "AT_MORPH");
 	UIFrame:SetPoint("LEFT", UIParent, "LEFT", Module.config.x, Module.config.y);
 	UIFrame:SetSize(48, 128);

@@ -1,7 +1,6 @@
 local _, Addon = ...; -- Namespace
 Addon.Config = {};
 
-local ModuleManager = Addon.ModuleManager;
 local Config = Addon.Config;
 local Util = Addon.Util;
 
@@ -159,9 +158,12 @@ function Config:EmittPropertyChange(moduleName, propertyName)
 	local propertyValue = GlobalConfiguration[moduleName][propertyName];
 	local moduleSubscribers = Config.Subscribers[moduleName];
 
-	-- Dispatch change to modules that have OnConfigChange method in workspace
-	-- Modules without this method will be ignored
-
+	-- Dispatch change to module if it has OnConfigChange method in workspace
+	local moduleChangeHandler = Addon.ModuleManager:GetModuleWorkspace(moduleName).OnConfigChange;
+	-- Modules without config handler method will be ignored
+	if moduleChangeHandler ~= nil then
+		moduleChangeHandler(propertyName, propertyValue);
+	end
 
 	-- Dispatch change to subscribers
 	if moduleSubscribers ~= nil then

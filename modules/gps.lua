@@ -62,6 +62,17 @@ function Module:Disable()
 	ui:Hide();
 end
 
+function Module.OnConfigChange(propertyName, propertyValue)
+	if propertyName == "refresh" then
+		UIFrame.Interval.value = propertyValue;
+		return;
+	end
+
+	if propertyName == "x" or propertyName == "y" then
+		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", Module.config.x, Module.config.y);
+	end
+end
+
 --------------------------------------
 -- Logic
 --------------------------------------
@@ -99,24 +110,11 @@ function Module:SetData(key, value)
 	end
 end
 
-function Module.OnConfigChange(propertyName, propertyValue)
-	if propertyName == "refresh" then
-		UIFrame.Interval.value = propertyValue;
-		return;
-	end
-
-	if propertyName == "x" or propertyName == "y" then
-		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", Module.config.x, Module.config.y);
-	end
-end
-
 --------------------------------------
 -- UI
 --------------------------------------
 
 function Module:CreateUIFrame()
-	Addon.Config:SubscribePropertyChange("gps", Module.OnConfigChange);
-
 	UIFrame = CreateFrame("Frame", "AT_GPS");
 	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", Module.config.x, Module.config.y);
 	UIFrame:SetSize(155, 64);
