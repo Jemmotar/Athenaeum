@@ -30,28 +30,16 @@ function Module.OnConfigChange(propertyName, propertyValue)
 end
 
 --------------------------------------
--- Logic
---------------------------------------
-
-function Module:ExecMorph(id)
-	if MorphModelId ~= id then
-		MorphModelId = id;
-	end
-
-	UIFrame.Input:SetNumber(id);
-	UIFrame.Input:ClearFocus();
-	SendChatMessage(".morph " .. id);
-end
-
---------------------------------------
 -- UI
 --------------------------------------
 
 function Module:CreateUIFrame()
+	-- Wrapper
 	UIFrame = CreateFrame("Frame", "AT_MORPH");
 	UIFrame:SetPoint("LEFT", UIParent, "LEFT", Module.config.x, Module.config.y);
 	UIFrame:SetSize(48, 128);
 
+	-- Model Id input
 	UIFrame.Input = CreateFrame("EditBox", "AT_INPUT", UIFrame, "InputBoxTemplate");
 	UIFrame.Input:SetPoint("CENTER", UIFrame, "CENTER");
 	UIFrame.Input:SetWidth(48);
@@ -62,42 +50,44 @@ function Module:CreateUIFrame()
 		Module:ExecMorph(UIFrame.Input:GetNumber());
 	end);
 
-	UIFrame.ButtonPlus = CreateFrame("Button", "AT_BTN_PLUS", UIFrame, "UIPanelButtonTemplate");
-	UIFrame.ButtonPlus:SetPoint("CENTER", UIFrame, "CENTER", 0, 25);
-	UIFrame.ButtonPlus:SetWidth(32);
-	UIFrame.ButtonPlus:SetHeight(24);
-	UIFrame.ButtonPlus:SetText("+");
-	UIFrame.ButtonPlus:RegisterForClicks("LeftButtonUp, RightButtonUp");
+	-- Controls
+	UIFrame.ButtonPlus = Module:CreateUIControl(UIFrame, 0, 25, "+");
 	UIFrame.ButtonPlus:SetScript("OnMouseUp", function(self, button)
-		if button == "LeftButton" then
-			MorphModelId = MorphModelId + Module.config.step;
-		else
-			MorphModelId = MorphModelId + Module.config.jump;
-		end
-		Module:ExecMorph(MorphModelId);
+		Module:ExecMorph(MorphModelId + (button == "LeftButton" and Module.config.step or Module.config.jump));
 	end);
 
-	UIFrame.ButtonMinus = CreateFrame("Button", "ADD_BTN_MINUS", UIFrame, "UIPanelButtonTemplate");
-	UIFrame.ButtonMinus:SetPoint("CENTER", UIFrame, "CENTER", 0, -24);
-	UIFrame.ButtonMinus:SetWidth(32);
-	UIFrame.ButtonMinus:SetHeight(24);
-	UIFrame.ButtonMinus:SetText("-");
-	UIFrame.ButtonMinus:RegisterForClicks("LeftButtonUp, RightButtonUp");
+	UIFrame.ButtonMinus = Module:CreateUIControl(UIFrame, 0, -24, "-");
 	UIFrame.ButtonMinus:SetScript("OnMouseUp", function(self, button)
-		if button == "LeftButton" then
-			if MorphModelId > 0 then
-				MorphModelId = MorphModelId - Module.config.step;
-			end
-		else
-			if MorphModelId > Module.config.jump then
-				MorphModelId = MorphModelId - Module.config.jump;
-			else
-				MorphModelId = 0;
-			end
-		end
-		Module:ExecMorph(MorphModelId);
+		Module:ExecMorph(MorphModelId - (button == "LeftButton" and Module.config.step or Module.config.jump));
 	end);
 
 	UIFrame:Hide();
 	return UIFrame;
+end
+
+function Module:CreateUIControl(parent, x, y, text)
+	local control = CreateFrame("Button", "AT_CONTROL_" .. text, parent, "UIPanelButtonTemplate");
+	control:SetPoint("CENTER", parent, "CENTER", x, y);
+	control:SetWidth(32);
+	control:SetHeight(24);
+	control:SetText(text);
+	control:RegisterForClicks("LeftButtonUp, RightButtonUp");
+	return control;
+end
+
+--------------------------------------
+-- Logic
+--------------------------------------
+
+function Module:ExecMorph(id)
+	if id < 0 then
+		id = 0;
+	end
+
+	if MorphModelId ~= id then
+		MorphModelId = id;
+		UIFrame.Input:SetNumber(id);
+		UIFrame.Input:ClearFocus();
+		SendChatMessage(".morph " .. id);
+	end
 end
