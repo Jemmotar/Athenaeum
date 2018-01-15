@@ -72,11 +72,6 @@ Config.Properties = {
 	}
 }
 
-Config.DefaultPropertyKeys = {
-	isConfigurable = true,
-	isPreserved = true
-};
-
 Config.PropertyEnabled = {
 	name = "enabled",
 	default = false,
@@ -84,7 +79,10 @@ Config.PropertyEnabled = {
 	isPreserved = false
 };
 
-Config.Subscribers = {};
+Config.DefaultPropertyKeys = {
+	isConfigurable = true,
+	isPreserved = true
+};
 
 function Config:Init()
 	-- Create saved variable object for config (first time addon is instaled)
@@ -143,6 +141,12 @@ function Config:GetProperty(module, propertyName)
 	return nil;
 end
 
+--------------------------------------
+-- Events
+--------------------------------------
+
+Config.Subscribers = {};
+
 function Config:SubscribePropertyChange(moduleName, subscriber)
 	if Config.Subscribers[moduleName] == nil then
 		Config.Subscribers[moduleName] = {};
@@ -156,7 +160,7 @@ function Config:EmittPropertyChange(moduleName, propertyName)
 	local moduleSubscribers = Config.Subscribers[moduleName];
 
 	if moduleSubscribers == nil then
-		return -- there are no subscribers registered
+		return; -- there are no subscribers registered
 	end
 
 	for _,subscriber in pairs(moduleSubscribers) do
@@ -176,15 +180,16 @@ end
 
 function Config:PrintModuleConfig(moduleName)
 	for _,property in pairs(Config.Properties[moduleName]) do
-		Config:PrintPropertyConfig(moduleName, property.name);
+		if Config:GetProperty(moduleName, property.name).isConfigurable then
+			local value = GlobalConfiguration[moduleName][property.name];
+			print("  " ..  Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(property.name, Util.Colors.property) .. " = " .. tostring(value));
+		end
 	end
 end
 
 function Config:PrintPropertyConfig(moduleName, propertyName)
-	if Config:GetProperty(moduleName, propertyName).isConfigurable then
-		local value = GlobalConfiguration[moduleName][propertyName];
-		print("  " ..  Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(propertyName, Util.Colors.property) .. " = " .. tostring(value));
-	end
+	local value = GlobalConfiguration[moduleName][propertyName];
+	Util:Print("Property " .. Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(propertyName, Util.Colors.property) .. " is set to " .. tostring(value));
 end
 
 function Config:HandleConfigCommand(moduleName, propertyName, propertyValue)

@@ -109,8 +109,7 @@ function Module.OnConfigChange(propertyName, propertyValue)
 	end
 
 	if propertyName == "x" or propertyName == "y" then
-		local ModuleConfig = Addon.ModuleManager:GetConfig("gps");
-		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.x, ModuleConfig.y);
+		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", Module.config.x, Module.config.y);
 	end
 end
 
@@ -120,10 +119,9 @@ end
 
 function Module:CreateUIFrame()
 	Addon.Config:SubscribePropertyChange("gps", Module.OnConfigChange);
-	local ModuleConfig = Addon.ModuleManager:GetConfig("gps");
 
 	UIFrame = CreateFrame("Frame", "AT_GPS");
-	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.x, ModuleConfig.y);
+	UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", Module.config.x, Module.config.y);
 	UIFrame:SetSize(155, 64);
 
 	UIFrame.TargetText = UIFrame:CreateFontString(UIFrame:GetName() .. "_TARGETTEXT", "OVERLAY", "GameFontGreen");
@@ -137,7 +135,7 @@ function Module:CreateUIFrame()
 	-- Create timer that will periodicly send .gps commdns via chat
 	-- No need to worry about stoping the timer, it will tick only when main frame is visible
 	UIFrame.Interval = CreateFrame("Frame", UIFrame:GetName() .. "_INTERVAL", UIFrame);
-	UIFrame.Interval.value = ModuleConfig.refreshRate; -- Update internal in seconds
+	UIFrame.Interval.value = Module.config.refreshRate; -- Update internal in seconds
 	UIFrame.Interval:SetScript("OnUpdate", function(self, elapsed)
 	    self.elapsed = (self.elapsed or 0) + elapsed;
 	    if self.elapsed >= self.value then
@@ -152,19 +150,18 @@ function Module:CreateUIFrame()
 end
 
 function Module:UpdateUIFrame()
-	local config = Addon.ModuleManager:GetConfig("gps");
 	local text = "";
 
-	if config["show-target"] and UnitExists("target") and (not UnitIsUnit("target", "player")) then
+	if Module.config["show-target"] and UnitExists("target") and (not UnitIsUnit("target", "player")) then
 		UIFrame.TargetText:SetText("[" .. UnitName("target") .. "]");
 	else
 		UIFrame.TargetText:SetText("");
 	end
 
 	for _, entry in pairs(Data) do
-		local showKey = config["show-" .. entry.key];
+		local showKey = Module.config["show-" .. entry.key];
 		if showKey or showKey == nil then
-			text = text .. Util:Capitalize(entry.key) .. ": " .. Util:Round(entry.value, config.accuracy) .. "\n";
+			text = text .. Util:Capitalize(entry.key) .. ": " .. Util:Round(entry.value, Module.config.accuracy) .. "\n";
 		end
 	end
 

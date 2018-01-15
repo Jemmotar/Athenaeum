@@ -39,8 +39,7 @@ end
 
 function Module.OnConfigChange(propertyName, propertyValue)
 	if propertyName == "x" or propertyName == "y" then
-		local ModuleConfig = Addon.ModuleManager:GetConfig("morph");
-		UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.x, ModuleConfig.y);
+		UIFrame:SetPoint("LEFT", UIParent, "LEFT", Module.config.x, Module.config.y);
 	end
 end
 
@@ -50,10 +49,9 @@ end
 
 function Module:CreateUIFrame()
 	Addon.Config:SubscribePropertyChange("morph", Module.OnConfigChange);
-	local ModuleConfig = Addon.ModuleManager:GetConfig("morph");
 
 	UIFrame = CreateFrame("Frame", "AT_MORPH");
-	UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.x, ModuleConfig.y);
+	UIFrame:SetPoint("LEFT", UIParent, "LEFT", Module.config.x, Module.config.y);
 	UIFrame:SetSize(48, 128);
 
 	UIFrame.Input = CreateFrame("EditBox", "AT_INPUT", UIFrame, "InputBoxTemplate");
@@ -74,9 +72,9 @@ function Module:CreateUIFrame()
 	UIFrame.ButtonPlus:RegisterForClicks("LeftButtonUp, RightButtonUp");
 	UIFrame.ButtonPlus:SetScript("OnMouseUp", function(self, button)
 		if button == "LeftButton" then
-			MorphModelId = MorphModelId + ModuleConfig.step;
+			MorphModelId = MorphModelId + Module.config.step;
 		else
-			MorphModelId = MorphModelId + ModuleConfig.jump;
+			MorphModelId = MorphModelId + Module.config.jump;
 		end
 		Module:ExecMorph(MorphModelId);
 	end);
@@ -90,11 +88,11 @@ function Module:CreateUIFrame()
 	UIFrame.ButtonMinus:SetScript("OnMouseUp", function(self, button)
 		if button == "LeftButton" then
 			if MorphModelId > 0 then
-				MorphModelId = MorphModelId - ModuleConfig.step;
+				MorphModelId = MorphModelId - Module.config.step;
 			end
 		else
-			if MorphModelId > ModuleConfig.jump then
-				MorphModelId = MorphModelId - ModuleConfig.jump;
+			if MorphModelId > Module.config.jump then
+				MorphModelId = MorphModelId - Module.config.jump;
 			else
 				MorphModelId = 0;
 			end
