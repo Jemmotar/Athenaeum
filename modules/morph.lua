@@ -1,6 +1,6 @@
 local _, Addon = ...; -- Namespace
 
-local Module = Addon.ModuleManager:GetModule("morph");
+local Module = Addon.ModuleManager:GetModuleWorkspace("morph");
 
 --------------------------------------
 -- Module
@@ -37,16 +37,16 @@ function Module:ExecMorph(id)
 	SendChatMessage(".morph " .. id);
 end
 
---------------------------------------
--- UI
---------------------------------------
-
 function Module.OnConfigChange(propertyName, propertyValue)
 	if propertyName == "x" or propertyName == "y" then
 		local ModuleConfig = Addon.ModuleManager:GetConfig("morph");
 		UIFrame:SetPoint("LEFT", UIParent, "LEFT", ModuleConfig.x, ModuleConfig.y);
 	end
 end
+
+--------------------------------------
+-- UI
+--------------------------------------
 
 function Module:CreateUIFrame()
 	Addon.Config:SubscribePropertyChange("morph", Module.OnConfigChange);

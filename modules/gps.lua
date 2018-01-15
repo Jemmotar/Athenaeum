@@ -1,6 +1,6 @@
 local _, Addon = ...; -- Namespace
 
-local Module = Addon.ModuleManager:GetModule("gps");
+local Module = Addon.ModuleManager:GetModuleWorkspace("gps");
 local Util = Addon.Util;
 
 --------------------------------------
@@ -102,10 +102,6 @@ function Module:SetData(key, value)
 	end
 end
 
---------------------------------------
--- UI
---------------------------------------
-
 function Module.OnConfigChange(propertyName, propertyValue)
 	if propertyName == "refresh" then
 		UIFrame.Interval.value = propertyValue;
@@ -117,6 +113,10 @@ function Module.OnConfigChange(propertyName, propertyValue)
 		UIFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", ModuleConfig.x, ModuleConfig.y);
 	end
 end
+
+--------------------------------------
+-- UI
+--------------------------------------
 
 function Module:CreateUIFrame()
 	Addon.Config:SubscribePropertyChange("gps", Module.OnConfigChange);
@@ -155,12 +155,10 @@ function Module:UpdateUIFrame()
 	local config = Addon.ModuleManager:GetConfig("gps");
 	local text = "";
 
-	if UnitExists("target") then
-		if not UnitIsUnit("target", "player") and config["show-target"] then
-			UIFrame.TargetText:SetText("[" .. UnitName("target") .. "]");
-		else
-			UIFrame.TargetText:SetText("");
-		end
+	if config["show-target"] and UnitExists("target") and (not UnitIsUnit("target", "player")) then
+		UIFrame.TargetText:SetText("[" .. UnitName("target") .. "]");
+	else
+		UIFrame.TargetText:SetText("");
 	end
 
 	for _, entry in pairs(Data) do

@@ -11,12 +11,6 @@ local Util = Addon.Util;
 
 local modules = {};
 
--- Copy keys for the list from config
--- This creates workspace for every module defined in config
-for key,_ in pairs(Config.Properties) do
-	modules[key] = {};
-end
-
 function ModuleManager:Init()
 	-- Enable all modules that are loaded with enabled flag set to true
 	for name,module in pairs(modules) do
@@ -30,8 +24,12 @@ end
 -- Modules
 --------------------------------------
 
-function ModuleManager:GetModule(module)
-	return modules[module];
+function ModuleManager:GetModuleWorkspace(moduleName)
+	if modules[moduleName] == nil then
+		modules[moduleName] = {};
+	end
+
+	return modules[moduleName];
 end
 
 function ModuleManager:GetConfig(module)
@@ -53,7 +51,7 @@ function ModuleManager:Toggle(module)
 
 	-- Toggle the module
 	config.enabled = not config.enabled;
-	ModuleManager:GetModule(module)[config.enabled and "Enable" or "Disable"]();
+	ModuleManager:GetModuleWorkspace(module)[config.enabled and "Enable" or "Disable"]();
 	ModuleManager:PrintStatusChange(module, config.enabled);
 end
 

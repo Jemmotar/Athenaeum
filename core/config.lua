@@ -126,7 +126,7 @@ function Config:Init()
 		for _,property in pairs(presets) do
 			-- If saved config does not have preset variable set it do preset default
 			-- Saved variable can be also set to preset default by isPreserved flag
-			if GlobalConfiguration[module][property.name] == nil or isPreserved == false then
+			if GlobalConfiguration[module][property.name] == nil or (not property.isPreserved) then
 				GlobalConfiguration[module][property.name] = property.default;
 			end
 		end
