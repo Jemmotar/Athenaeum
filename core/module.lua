@@ -14,7 +14,7 @@ local modules = {};
 function ModuleManager:Init()
 	for moduleName, moduleWorkspace in pairs(modules) do
 		-- At this point configuration is ready
-		-- Injects config field into module workspace
+		-- Inject config field into module workspace
 		moduleWorkspace.config = GlobalConfiguration[moduleName];
 
 		-- Enable all modules that are loaded with enabled flag set to true

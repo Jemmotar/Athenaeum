@@ -90,19 +90,19 @@ function Config:Init()
 		GlobalConfiguration = {};
 	end
 
-	for module,presets in pairs(Config.Properties) do
+	for moduleName, moduleProperties in pairs(Config.Properties) do
 		local hasEnabledProperty = false;
 
-		for _,property in pairs(presets) do
-			if property.name == "enabled" then
+		for _, moduleProperty in pairs(moduleProperties) do
+			if moduleProperty.name == "enabled" then
 				hasEnabledProperty = true;
 			end
 
 			-- Make sure every property has default keys
 			-- If not, copy them from DefaultPropertyKeys
-			for pKey, pValue in pairs(Config.DefaultPropertyKeys) do
-				if property[pKey] == nil then
-					property[pKey] = pValue;
+			for defaultPropertyKey, defaultPropertyValue in pairs(Config.DefaultPropertyKeys) do
+				if moduleProperty[defaultPropertyKey] == nil then
+					moduleProperty[defaultPropertyKey] = defaultPropertyValue;
 				end
 			end
 		end
@@ -110,31 +110,31 @@ function Config:Init()
 		-- Make sure every module has enabled property
 		-- If not, use default enabled property
 		if not hasEnabledProperty then
-			table.insert(presets, Config.PropertyEnabled);
+			table.insert(moduleProperties, Config.PropertyEnabled);
 		end
 	end
 
-	for module,presets in pairs(Config.Properties) do
+	for moduleName, moduleProperties in pairs(Config.Properties) do
 		-- If module does not have config namespace, create it
-		if GlobalConfiguration[module] == nil then
-			GlobalConfiguration[module] = {};
+		if GlobalConfiguration[moduleName] == nil then
+			GlobalConfiguration[moduleName] = {};
 		end
 
-		-- Go trough all module presets
-		for _,property in pairs(presets) do
+		-- Go trough all module properties
+		for _,moduleProperty in pairs(moduleProperties) do
 			-- If saved config does not have preset variable set it do preset default
 			-- Saved variable can be also set to preset default by isPreserved flag
-			if GlobalConfiguration[module][property.name] == nil or (not property.isPreserved) then
-				GlobalConfiguration[module][property.name] = property.default;
+			if GlobalConfiguration[moduleName][moduleProperty.name] == nil or (not moduleProperty.isPreserved) then
+				GlobalConfiguration[moduleName][moduleProperty.name] = moduleProperty.default;
 			end
 		end
 	end
 end
 
-function Config:GetProperty(module, propertyName)
-	for _,property in pairs(Config.Properties[module]) do
-		if property.name == propertyName then
-			return property;
+function Config:GetProperty(moduleName, propertyName)
+	for _, moduleProperty in pairs(Config.Properties[moduleName]) do
+		if moduleProperty.name == propertyName then
+			return moduleProperty;
 		end
 	end
 
@@ -159,12 +159,15 @@ function Config:EmittPropertyChange(moduleName, propertyName)
 	local propertyValue = GlobalConfiguration[moduleName][propertyName];
 	local moduleSubscribers = Config.Subscribers[moduleName];
 
-	if moduleSubscribers == nil then
-		return; -- there are no subscribers registered
-	end
+	-- Dispatch change to modules that have OnConfigChange method in workspace
+	-- Modules without this method will be ignored
 
-	for _,subscriber in pairs(moduleSubscribers) do
-		subscriber(propertyName, propertyValue);
+
+	-- Dispatch change to subscribers
+	if moduleSubscribers ~= nil then
+		for _,subscriber in pairs(moduleSubscribers) do
+			subscriber(propertyName, propertyValue);
+		end
 	end
 end
 
@@ -173,23 +176,23 @@ end
 --------------------------------------
 
 function Config:PrintAllConfigs()
-	for module,_ in pairs(GlobalConfiguration) do
-		Config:PrintModuleConfig(module);
+	for moduleName, _ in pairs(GlobalConfiguration) do
+		Config:PrintModuleConfig(moduleName);
 	end
 end
 
 function Config:PrintModuleConfig(moduleName)
-	for _,property in pairs(Config.Properties[moduleName]) do
-		if Config:GetProperty(moduleName, property.name).isConfigurable then
-			local value = GlobalConfiguration[moduleName][property.name];
-			print("  " ..  Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(property.name, Util.Colors.property) .. " = " .. tostring(value));
+	for _, moduleProperty in pairs(Config.Properties[moduleName]) do
+		if Config:GetProperty(moduleName, moduleProperty.name).isConfigurable then
+			local propertyValue = GlobalConfiguration[moduleName][moduleProperty.name];
+			print("  " ..  Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(moduleProperty.name, Util.Colors.property) .. " = " .. tostring(propertyValue));
 		end
 	end
 end
 
 function Config:PrintPropertyConfig(moduleName, propertyName)
-	local value = GlobalConfiguration[moduleName][propertyName];
-	Util:Print("Property " .. Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(propertyName, Util.Colors.property) .. " is set to " .. tostring(value));
+	local propertyValue = GlobalConfiguration[moduleName][propertyName];
+	Util:Print("Property " .. Util:Colorize(moduleName, Util.Colors.module) .. "." .. Util:Colorize(propertyName, Util.Colors.property) .. " is set to " .. tostring(propertyValue));
 end
 
 function Config:HandleConfigCommand(moduleName, propertyName, propertyValue)

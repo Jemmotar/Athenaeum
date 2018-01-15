@@ -50,9 +50,6 @@ function Module:Enable()
 
 	local ui = UIFrame or Module:CreateUIFrame();
 	ui:Show();
-
-	-- Get initial data
-	SendChatMessage(".gps");
 end
 
 function Module:Disable()
@@ -135,7 +132,7 @@ function Module:CreateUIFrame()
 	-- Create timer that will periodicly send .gps commdns via chat
 	-- No need to worry about stoping the timer, it will tick only when main frame is visible
 	UIFrame.Interval = CreateFrame("Frame", UIFrame:GetName() .. "_INTERVAL", UIFrame);
-	UIFrame.Interval.value = Module.config.refreshRate; -- Update internal in seconds
+	UIFrame.Interval.value = Module.config.refresh; -- Update internal in seconds
 	UIFrame.Interval:SetScript("OnUpdate", function(self, elapsed)
 	    self.elapsed = (self.elapsed or 0) + elapsed;
 	    if self.elapsed >= self.value then
